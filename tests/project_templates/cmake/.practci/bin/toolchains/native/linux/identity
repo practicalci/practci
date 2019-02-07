@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -e
+
+# echo "---------------------------------------------------------------------------------"
+# echo "Identity toolchain, executes native, with system installed tools"
+#echo "executing command: $@"
+# echo "---------------------------------------------------------------------------------"
+
+$@

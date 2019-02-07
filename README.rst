@@ -16,7 +16,7 @@ Practical CI workflow
 
 
 
-Command line tool to support development workflow.
+Command line tool to support TDD development workflow.
 
 
 * Free software: BSD license
@@ -28,6 +28,39 @@ Features
 
 * TODO
 
+Project Folder Structure
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block::
+
+    <project_dir>
+                 + condaenv_dev.yaml
+                 + condaenv_build.yaml
+                 +
+                 + .practci.cfg # configuration
+                 + .practci
+                           + bin
+                                + dockcross
+                                           + linux-64 ?
+                                           + linux-native-gcc5
+                                           + windows-native-vc14
+                                + dockcheck
+                                           + linux-64 ?
+                                           + linux-native-clang-4.8
+                                           + windows-native-??
+                           + provision
+                                      + conda
+                                      + linux
+                                      |      + all
+                                      |      + debian
+                                      |      + ubuntu
+                                      + windows
+                                               + all
+                                               + 10
+                                               + 7
+
+
+
 Credits
 -------
 
@@ -35,3 +68,8 @@ This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypack
 
 .. _Cookiecutter: https://github.com/audreyr/cookiecutter
 .. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
+
+References
+----------
+
+https://cmake.org/cmake/help/v3.12/variable/MSVC_VERSION.html
