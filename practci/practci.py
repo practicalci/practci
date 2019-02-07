@@ -2,7 +2,6 @@
 
 """Main module."""
 
-
 import os
 import stat
 import subprocess
@@ -10,6 +9,9 @@ import subprocess
 from enum import IntEnum, auto
 
 from .build_tools import BuildToolType, BuildType, BuildTarget
+
+import practci.toolchains as toolchains
+import practci.build_tools as build_tools
 
 
 class EnvironmentType(IntEnum):
@@ -33,7 +35,7 @@ def cmake_setup_build(build_type, build_dir):
 
     command = ['cmake', '-G', 'Ninja']
 
-    cmake_build_params = cmake_build_type .get(build_type, BuildTarget.UNKNOWN)
+    cmake_build_params = cmake_build_type.get(build_type, BuildTarget.UNKNOWN)
     command += cmake_build_params
     command += '..'
 
@@ -50,7 +52,6 @@ def build_target_none():
 
 def cmake_build(target=BuildTarget.NONE, build_dir_prefix="./", build_dir_name="", environment=EnvironmentType.NATIVE,
                 toolchain=None, build_type=BuildType.DEBUG):
-
     build_dir = os.path.join(build_dir_prefix, build_dir_name)
 
     # create build dir if it does not exists.
@@ -63,7 +64,7 @@ def cmake_build(target=BuildTarget.NONE, build_dir_prefix="./", build_dir_name="
         BuildTarget.NONE: build_target_none
     }
 
-    targets.get(target)() # execute the proper target
+    targets.get(target)()  # execute the proper target
 
 
 def install_build_environments(dockerimages, output_dir):
@@ -88,7 +89,9 @@ class PractCIConfig:
     """
     Configuration class, used to load and save settings and to pass parameters to the tool class.
     """
-    def __init__(self, config_file=None, environment_type=EnvironmentType.NATIVE, default_provisioning_dir=None, user_provisioning_dir=None,
+
+    def __init__(self, config_file=None, environment_type=EnvironmentType.NATIVE, default_provisioning_dir=None,
+                 user_provisioning_dir=None,
                  docker_images=None, work_dir=None, bin_dir=None):
         self.config_file = config_file
         self.environment_type = environment_type
@@ -121,17 +124,19 @@ class PractCIConfig:
         if self._project_root_path is None:
             self._project_root_path = os.path.dirname(self.config_file)
 
-        return self._project_root_path;
+        return self._project_root_path
+
 
 class PractCI:
 
-    def __init__(self, config):
+    def __init__(self, config: PractCIConfig):
         self.config = config
 
-    def build(self, tool=BuildToolType.CMAKE, target=BuildTarget.SETUP_BUILD, build_type=BuildType.DEBUG,
-              toolchain='native/identity', checkchain='native/identity'):
-        pass
-
+    def setup(self, tool_type=BuildToolType.CMAKE, toolchain_name='native/identity', build_type=BuildType.DEBUG):
+        project_root_dir = self.config.get_project_root_dir()
+        toolchain = toolchains.get_tool_chain(toolchain_name, project_root_dir)
+        build_tool = build_tools.get_build_tool(tool_type)
+        build_tool.setup(project_root_dir, toolchain, build_type)
 
     def install_platform_dependencies(self):
         """Run platform specific scripts to install required operating system requirements for the PractCI tool.
@@ -141,7 +146,6 @@ class PractCI:
         # https://bugs.python.org/issue1322#msg263896
         # platform.dist() will be deprecated, and it is not reliable
         # https://pypi.org/project/distro/
-
 
     def install_project_environment(self):
         pass
@@ -168,7 +172,6 @@ class PractCI:
 
     def setup_build_environment(self):
         """ sets up the build environment """
-
 
     def render_directory_project_structure(self):
         pass

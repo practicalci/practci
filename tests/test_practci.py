@@ -4,6 +4,7 @@
 """Tests for `practci` package."""
 
 import os
+import shutil
 import unittest
 
 from click.testing import CliRunner
@@ -80,19 +81,28 @@ class TestPractci(unittest.TestCase):
 
 
     def test_build_setup(self):
+        project_root_dir = os.path.dirname(cmake_template.__file__)
 
-        config = PractCIConfig(cmake_template.__file__, '.practci.cfg')
+        config_file = os.path.join(project_root_dir, '.practci.cfg')
+
+        config = PractCIConfig(config_file=config_file)
 
         practci = PractCI(config)
 
-        practci.build(tool=BuildToolType.CMAKE, target=BuildTarget.SETUP_BUILD, build_type=BuildType.DEBUG,
-                      toolchain='native/identity', checkchain='native/identity')
+        practci.setup(tool_type=BuildToolType.CMAKE, toolchain_name='native/identity', build_type=BuildType.DEBUG)
 
-        self.assertTrue(os.path.exists(os.path.join(cmake_template.__file__, 'build')))
-        self.assertTrue(os.path.isdir(os.path.join(cmake_template.__file__, 'build')))
+        build_dir = os.path.join(project_root_dir, 'build')
+        install_dir = os.path.join(project_root_dir, 'install')
 
-        self.assertTrue(os.path.exists(os.path.join(cmake_template.__file__, 'build', 'native-static-checks')))
-        self.assertTrue(os.path.isdir(os.path.join(cmake_template.__file__, 'build', 'native-static-checks')))
+        self.assertTrue(os.path.exists(build_dir))
+        self.assertTrue(os.path.isdir(build_dir))
+
+        self.assertTrue(os.path.exists(install_dir))
+        self.assertTrue(os.path.isdir(install_dir))
+
+        shutil.rmtree(build_dir)
+        shutil.rmtree(install_dir)
+
 
 
 

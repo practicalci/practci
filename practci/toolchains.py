@@ -45,6 +45,9 @@ class ToolChain:
         self._project_root_dir = project_root_dir
         self._wrapper_script_abs_path = os.path.join(self._project_root_dir, self._wrapper_script_path)
 
+    def get_name(self) -> str:
+        return self._name
+
     def get_channel(self) -> str:
         return self._channel
 
